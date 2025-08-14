@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Phishing Link Scanner | AI Powered</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #333;
+    }
+    .scanner-card {
+      background: #fff;
+      max-width: 600px;
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(50,50,93,.1), 0 5px 15px rgba(0,0,0,.07);
+      padding: 30px;
+      overflow: hidden;
+    }
+    .scanner-header {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #4b44ce;
+    }
+    .scanner-header h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+    }
+    .scanner-header p {
+      font-weight: 500;
+      color: #666;
+      font-size: 1.1rem;
+    }
+    form .form-control {
+      border-radius: 12px;
+      padding: 15px 20px;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      transition: border-color 0.3s ease;
+    }
+    form .form-control:focus {
+      border-color: #6c63ff;
+      box-shadow: 0 0 5px #6c63ff66;
+      outline: none;
+    }
+    button[type="submit"] {
+      background: #6c63ff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      width: 100%;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 15px;
+    }
+    button[type="submit"]:hover {
+      background: #5848c2;
+    }
+    .ai-info {
+      text-align: center;
+      font-style: italic;
+      margin-top: 20px;
+      color: #999;
+      font-size: 0.95rem;
+    }
+    .result-section {
+      margin-top: 30px;
+    }
+    .result-section h3 {
+      color: #4b44ce;
+      font-weight: 700;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #6c63ff;
+      padding-bottom: 6px;
+    }
+    .result-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .result-list li {
+      background: #f7f7fc;
+      margin-bottom: 10px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      box-shadow: inset 2px 2px 8px #e0e0f3, inset -2px -2px 8px #ffffff;
+      display: flex;
+      justify-content: space-between;
+      color: #444;
+    }
+    .result-label {
+      font-weight: 600;
+      color: #6c63ff;
+    }
+    .prediction-box {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      text-align: center;
+      color: white;
+      user-select: none;
+      box-shadow: 0 10px 20px rgb(0 0 0 / 0.1);
+    }
+    .phishing {
+      background: #ff3860;
+      box-shadow: 0 10px 30px rgb(255 56 96 / 0.5);
+    }
+    .legitimate {
+      background: #28a745;
+      box-shadow: 0 10px 30px rgb(40 167 69 / 0.5);
+    }
+    .explanation {
+      margin-top: 15px;
+      background: #f0f0ff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      box-shadow: inset 2px 2px 8px #d7d7f7;
+    }
+    .notes-card {
+      margin-top: 20px;
+      background: #fff3cd;
+      border-radius: 12px;
+      padding: 15px 20px;
+      color: #856404;
+      box-shadow: 0 3px 15px rgb(255 193 7 / 0.2);
+    }
+    .notes-card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scanner-card">
+    <div class="scanner-header">
+      <h1>🔐 Phishing Link Scanner</h1>
+      <p>Protect yourself by analyzing suspicious links instantly</p>
+    </div>
+
+    <form method="POST" action="/">
+      <input
+        type="text"
+        name="url"
+        class="form-control"
+        placeholder="Enter URL to scan, e.g. https://example.com"
+        required
+        value="{{ result.input_url if result else '' }}"
+        autocomplete="off"
+      />
+      <button type="submit">Scan Link</button>
+    </form>
+
+    <p class="ai-info"> Recherche en intelligence artificielle </p>
+
+    {% if result %}
+      <div class="result-section">
+        <h3>🔎 Scan Details</h3>
+        <ul class="result-list">
+          <li><span class="result-label">URL:</span> <span>{{ result.input_url }}</span></li>
+          <li><span class="result-label">Normalized URL:</span> <span>{{ result.normalized_url }}</span></li>
+          <li><span class="result-label">Status code:</span> <span>{{ result.status_code }}</span></li>
+          <li><span class="result-label">Final URL:</span> <span>{{ result.final_url }}</span></li>
+          <li><span class="result-label">Redirect count:</span> <span>{{ result.redirect_count }}</span></li>
+          <li><span class="result-label">Domain:</span> <span>{{ result.domain }}</span></li>
+          <li><span class="result-label">IP:</span> <span>{{ result.ip }}</span></li>
+          <li><span class="result-label">Contains IP in URL:</span> <span>{{ result.contains_ip }}</span></li>
+          <li><span class="result-label">Shortened:</span> <span>{{ result.is_shortened }}</span></li>
+          <li><span class="result-label">Keywords found:</span> <span>
+            {% if result.suspicious_keywords %}
+              {{ result.suspicious_keywords | join(', ') }}
+            {% else %}
+              None
+            {% endif %}
+          </span></li>
+          <li><span class="result-label">SSL expiry:</span> <span>{{ result.ssl_expiry }}</span></li>
+          <li><span class="result-label">WHOIS:</span>
+            <div style="margin-top: 5px;">
+              {% if result.whois %}
+                Registrar: {{ result.whois.registrar }}<br />
+                Creation Date: {{ result.whois.creation_date }}<br />
+                Expiration Date: {{ result.whois.expiration_date }}
+              {% else %}
+                None
+              {% endif %}
+            </div>
+          </li>
+        </ul>
+
+        <div class="prediction-box {% if result.ml_prediction == 'phishing' %}phishing{% elif result.ml_prediction == 'legitimate' %}legitimate{% else %}bg-secondary{% endif %}">
+          ML Model Prediction: {{ result.ml_prediction | capitalize if result.ml_prediction else 'Unknown' }}
+        </div>
+
+        <div class="explanation">
+          {% if result.ml_prediction == 'phishing' %}
+            🚨 Ce lien pourrait être frauduleux (Phishing) car il contient des caractéristiques suspectes telles que :
+            <ul>
+              {% if result.contains_ip %}
+                <li> Présence d’une adresse IP au lieu d’un nom de domaine </li>
+              {% endif %}
+              {% if result.is_shortened %}
+                <li>Utilisation de liens raccourcis</li>
+              {% endif %}
+              {% if result.suspicious_keywords %}
+                <li>Présence de mots suspects :{{ result.suspicious_keywords | join(', ') }}.</li>
+              {% endif %}
+              <li> Veuillez faire preuve de prudence lors de l’interaction avec ce lien.</li>
+            </ul>
+          {% elif result.ml_prediction == 'legitimate' %}
+            ✅ Ce lien semble sûr d’après ses caractéristiques et l’analyse du modèle, et ne contient pas d’indicateurs suspects évidents.
+          {% else %}
+            ℹ️ Aucun résultat prédictif n’est disponible pour ce lien.
+          {% endif %}
+        </div>
+
+        {% if result.notes %}
+          <div class="notes-card">
+            <Remarques / Avertissements</h6>
+            <ul>
+              {% for n in result.notes %}
+                <li>{{ n }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+</body>
+</html>
